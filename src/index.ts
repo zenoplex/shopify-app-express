@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config();
 import express from 'express';
-// import session from 'express-session';
+import session from 'express-session';
 import _app from './routes/app';
 import shopify from './routes/shopify';
 import morgan from 'morgan';
@@ -14,15 +14,16 @@ if (!sessionSecret) {
 
 const app = express();
 app.use(morgan('dev'));
-// app.use(
-//   // Should use external store strategy in production
-//   session({
-//     secret: sessionSecret,
-//     cookie: { secure: false },
-//     resave: true,
-//     saveUninitialized: true,
-//   }),
-// );
+app.use(
+  // Should use external store strategy in production
+  session({
+    secret: sessionSecret,
+    // sameSite: 'none', secure required for ngrok
+    cookie: { sameSite: 'none', secure: true },
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
 app.use('/app', _app);
 app.use('/shopify', shopify);
 

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import fetch from 'node-fetch';
 import { verifyHmac } from '../utils/verifyHmac';
-import cookie from 'cookie';
+// import cookie from 'cookie';
 
 const router = Router();
 
@@ -25,10 +25,8 @@ router.get('/install', (req, res) => {
     // https://shopify.dev/tutorials/authenticate-with-oauth
     const installUrl = `https://${shop}/admin/oauth/authorize?client_id=${shopifyApiKey}&scope=${shopifyAppScope}&state=${state}&redirect_uri=${redirectUri}`;
 
-    res
-      .cookie('unko', 'test')
-      .cookie('state', state, { httpOnly: true, sameSite: 'none' })
-      .redirect(installUrl);
+    req.session.state = state;
+    res.redirect(installUrl);
     return;
   }
 
@@ -38,14 +36,8 @@ router.get('/install', (req, res) => {
 router.get(CALLBACK_ROUTE, async (req, res) => {
   const { shop, hmac, code, state } = req.query;
 
-  console.log(req.headers, req.headers.cookie);
-  console.log(
-    `session.state: ${
-      cookie.parse(req.headers.cookie || '').state
-    }, query.state: ${state}`,
-  );
   //  State no match
-  if (cookie.parse(req.headers.cookie || '').state !== state) {
+  if (req.session.state !== state) {
     res.status(400).send('Invalid state');
     return;
   }
