@@ -12,8 +12,6 @@ if (!sessionSecret) {
 }
 
 const app = express();
-// https://github.com/expressjs/session#cookiesecure
-app.set('trust proxy', 1);
 app.use(
   // Should use external store strategy in production
   session({

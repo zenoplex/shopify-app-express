@@ -43,6 +43,7 @@ router.get(CALLBACK_ROUTE, async (req, res) => {
 
   //  State no match
   if (req.session.state !== state) {
+    console.log(`session.state: ${req.session.state}, query.state: ${state}`);
     res.status(400).send('Invalid state');
     return;
   }
