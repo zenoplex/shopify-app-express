@@ -1,9 +1,10 @@
 import { config } from 'dotenv';
 config();
 import express from 'express';
-import session from 'express-session';
+// import session from 'express-session';
 import _app from './routes/app';
 import shopify from './routes/shopify';
+import morgan from 'morgan';
 
 const sessionSecret = process.env.SESSION_SECRET;
 
@@ -12,15 +13,16 @@ if (!sessionSecret) {
 }
 
 const app = express();
-app.use(
-  // Should use external store strategy in production
-  session({
-    secret: sessionSecret,
-    cookie: { secure: false },
-    resave: true,
-    saveUninitialized: true,
-  }),
-);
+app.use(morgan('dev'));
+// app.use(
+//   // Should use external store strategy in production
+//   session({
+//     secret: sessionSecret,
+//     cookie: { secure: false },
+//     resave: true,
+//     saveUninitialized: true,
+//   }),
+// );
 app.use('/app', _app);
 app.use('/shopify', shopify);
 
