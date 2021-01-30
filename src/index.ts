@@ -18,7 +18,7 @@ app.use(
   // Should use external store strategy in production
   session({
     secret: sessionSecret,
-    cookie: { secure: process.env.NODE_ENV === 'production' },
+    cookie: { secure: false },
     resave: true,
     saveUninitialized: true,
   }),
