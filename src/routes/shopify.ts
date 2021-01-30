@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import fetch from 'node-fetch';
 import { verifyHmac } from '../utils/verifyHmac';
-// import cookie from 'cookie';
 
 const router = Router();
 

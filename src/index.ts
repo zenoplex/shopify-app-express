@@ -2,16 +2,14 @@ import { config } from 'dotenv';
 config();
 import express from 'express';
 import session from 'express-session';
+import morgan from 'morgan';
+import { createRedisStore } from './storages/redis';
 import _app from './routes/app';
 import shopify from './routes/shopify';
-import morgan from 'morgan';
 
-const sessionSecret = process.env.SESSION_SECRET;
+const shopifyApiSecretKey = process.env.SHOPIFY_API_SECRET_KEY;
 const port = Number(process.env.PORT) || 3000;
-
-if (!sessionSecret) {
-  throw new Error('SESSION_SECRET must be defined in env');
-}
+const redisUrl = process.env.REDIS_URL;
 
 const app = express();
 app.use(morgan('dev'));
@@ -20,11 +18,12 @@ app.set('trust proxy', true);
 app.use(
   // Should use external store strategy in production
   session({
-    secret: sessionSecret,
+    secret: shopifyApiSecretKey,
     // sameSite: 'none', secure required for ngrok
     cookie: { sameSite: 'none', secure: true },
     resave: false,
     saveUninitialized: true,
+    store: redisUrl ? createRedisStore(session, redisUrl) : undefined,
   }),
 );
 app.use('/app', _app);

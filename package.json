@@ -16,7 +16,7 @@
   "author": "Gen Ichino<zenoplex@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/cookie": "0.4.0",
+    "@types/connect-redis": "0.0.16",
     "@types/dotenv": "8.2.0",
     "@types/express": "4.17.11",
     "@types/express-session": "1.17.3",
@@ -40,12 +40,13 @@
     "typescript": "4.0.3"
   },
   "dependencies": {
-    "cookie": "0.4.1",
+    "connect-redis": "5.0.0",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "express-session": "1.17.1",
     "morgan": "1.10.0",
     "node-fetch": "2.6.1",
+    "redis": "3.0.2",
     "uuid": "8.3.2"
   }
 }
