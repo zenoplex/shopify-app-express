@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-    "start": "env NODE_ENV=production sh -c 'npm run build && node dist/index.js'",
+    "start": "NODE_ENV=production node dist/index.js",
     "build": "rm -rf ./dist && tsc",
     "lint": "eslint . --ext .ts",
     "test": "jest",
