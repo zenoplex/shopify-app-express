@@ -1,0 +1,47 @@
+{
+  "private": true,
+  "name": "shopify-express-sandbox",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "env NODE_ENV=production sh -c 'npm run build && node dist/index.js'",
+    "build": "rm -rf ./dist && tsc",
+    "lint": "eslint . --ext .ts",
+    "test": "jest",
+    "test:watch": "jest --watchAll"
+  },
+  "keywords": [],
+  "author": "Gen Ichino<zenoplex@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/dotenv": "8.2.0",
+    "@types/express": "4.17.11",
+    "@types/express-session": "1.17.3",
+    "@types/jest": "26.0.14",
+    "@types/node": "12.7.2",
+    "@types/node-fetch": "2.5.8",
+    "@types/uuid": "8.3.0",
+    "@typescript-eslint/eslint-plugin": "2.21.0",
+    "@typescript-eslint/parser": "2.21.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-jest": "24.1.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "3.3.1",
+    "jest": "26.5.3",
+    "nodemon": "1.19.1",
+    "prettier": "1.19.1",
+    "ts-jest": "26.4.1",
+    "ts-node": "8.3.0",
+    "typescript": "4.0.3"
+  },
+  "dependencies": {
+    "dotenv": "8.2.0",
+    "express": "4.17.1",
+    "express-session": "1.17.1",
+    "node-fetch": "2.6.1",
+    "uuid": "8.3.2"
+  }
+}
