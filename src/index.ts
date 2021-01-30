@@ -12,11 +12,12 @@ if (!sessionSecret) {
 }
 
 const app = express();
+// https://github.com/expressjs/session#cookiesecure
+app.set('trust proxy', 1);
 app.use(
   // Should use external store strategy in production
   session({
     secret: sessionSecret,
-    // Should be set to true in production
     cookie: { secure: process.env.NODE_ENV === 'production' },
     resave: true,
     saveUninitialized: true,
