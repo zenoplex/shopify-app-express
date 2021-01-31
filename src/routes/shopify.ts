@@ -11,6 +11,7 @@ const shopifyApiKey = process.env.SHOPIFY_API_KEY;
 const shopifyApiSecretKey = process.env.SHOPIFY_API_SECRET_KEY;
 const shopifyAppUrl = process.env.SHOPIFY_APP_URL;
 const shopifyAppScope = process.env.SHOPIFY_APP_SCOPE;
+const shopifyAppInitialUrl = process.env.SHOPIFY_APP_INITIAL_URL;
 
 if (!shopifyApiKey || !shopifyApiSecretKey || !shopifyAppUrl) {
   throw new Error(`Missing required env variables`);
@@ -71,8 +72,10 @@ router.get(CALLBACK_ROUTE, async (req, res) => {
 
           if ('access_token' in json) {
             // Make api calls with X-Shopify-Access-Token: {access_token} header
-            // redirect to app whereever you wish
-            res.redirect(`${shopifyAppUrl}/app?shop=${shop}`);
+            // Final url should be under shopifyAppUrl domain. For dev purpose allowing it to be set via env
+            res.redirect(
+              shopifyAppInitialUrl || `${shopifyAppUrl}/app?shop=${shop}`,
+            );
             return;
           }
 
