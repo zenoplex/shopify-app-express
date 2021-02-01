@@ -51,10 +51,13 @@ router.get('/api/install', (req, res) => {
 
 router.get('/api/verify', (req, res) => {
   console.log(req.query, req.session.state, req.headers);
-  cookie.parse(req.headers.cookie);
+  const parsedCookie = cookie.parse(req.headers.cookie || '');
+  if ('state' in parsedCookie) {
+    // just mocking for now
+    res.status(200).json({ status: 'ok' });
+  }
 
-  // just mocking for now
-  res.status(200).json({ status: 'ok' });
+  res.status(400).send();
 });
 
 router.get(CALLBACK_ROUTE, async (req, res) => {
