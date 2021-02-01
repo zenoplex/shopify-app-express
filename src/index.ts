@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { createRedisStore } from './storages/redis';
 import _app from './routes/app';
 import shopify from './routes/shopify';
+import cors from 'cors';
 
 const shopifyApiSecretKey = process.env.SHOPIFY_API_SECRET_KEY;
 const port = Number(process.env.PORT) || 3000;
@@ -13,6 +14,7 @@ const redisUrl = process.env.REDIS_URL;
 
 const app = express();
 app.use(morgan('dev'));
+app.use(cors());
 // https://github.com/expressjs/session#cookiesecure
 app.set('trust proxy', true);
 app.use(

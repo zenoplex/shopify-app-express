@@ -33,6 +33,29 @@ router.get('/install', (req, res) => {
   res.status(400).send();
 });
 
+router.get('/api/install', (req, res) => {
+  const { shop } = req.query;
+  if (typeof shop === 'string') {
+    const state = uuid();
+    const redirectUri = `${shopifyAppUrl}${req.baseUrl}${CALLBACK_ROUTE}`;
+    // https://shopify.dev/tutorials/authenticate-with-oauth
+    const installUrl = `https://${shop}/admin/oauth/authorize?client_id=${shopifyApiKey}&scope=${shopifyAppScope}&state=${state}&redirect_uri=${redirectUri}`;
+
+    // should be handled with cookie
+    res.cookie('state', state);
+    res.json({ installUrl });
+    return;
+  }
+
+  res.status(400).send();
+});
+
+router.get('/api/verify', (req, res) => {
+  console.log(req.query, req.session.state, req.headers);
+  // just mocking for now
+  res.status(200).json({ status: 'ok' });
+});
+
 router.get(CALLBACK_ROUTE, async (req, res) => {
   const { shop, hmac, code, state } = req.query;
 
