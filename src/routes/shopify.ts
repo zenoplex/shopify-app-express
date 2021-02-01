@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import fetch from 'node-fetch';
 import cookie from 'cookie';
 import { verifyHmac } from '../utils/verifyHmac';
+import { parse } from 'dotenv/types';
 
 const router = Router();
 
@@ -49,12 +50,63 @@ router.get('/api/install', (req, res) => {
   res.status(400).send();
 });
 
-router.get('/api/verify', (req, res) => {
+router.get('/api/verify', async (req, res) => {
   console.log(req.query, req.session.state, req.headers);
   const parsedCookie = cookie.parse(req.headers.cookie || '');
   if ('state' in parsedCookie) {
-    // just mocking for now
-    res.status(200).json({ status: 'ok' });
+    if (parsedCookie.state === req.query.state) {
+      const { shop, hmac, code } = req.query;
+      if (shop && hmac && code) {
+        // Removing hmac from query. Using ...rest because request parameters provided by Shopify is subject to change
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { hmac: _hmac, ...message } = req.query;
+
+        if (verifyHmac(String(hmac), shopifyApiSecretKey, message)) {
+          // exchange the access code for a permanent access token
+          try {
+            const response = await fetch(
+              `https://${shop}/admin/oauth/access_token`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  // eslint-disable-next-line @typescript-eslint/camelcase
+                  client_id: shopifyApiKey,
+                  // eslint-disable-next-line @typescript-eslint/camelcase
+                  client_secret: shopifyApiSecretKey,
+                  code,
+                }),
+              },
+            );
+
+            if (response.ok) {
+              const json:
+                | { access_token: string; scope: string }
+                | { size: number; timeout: number } = await response.json();
+
+              if ('access_token' in json) {
+                // Should save access token to DB
+                // Make api calls with X-Shopify-Access-Token: {access_token} header
+                // just mocking for now
+                res.status(200).json({ ok: true });
+                return;
+              }
+
+              // Auth timeout
+              res.status(400).send(response);
+              return;
+            }
+
+            // in case of client and server errors
+            res.status(400).send(response);
+          } catch (err) {
+            res.status(400).send(err);
+          }
+        }
+        res.status(400).send('Validation failed');
+        return;
+      }
+    }
   }
 
   res.status(400).send();
