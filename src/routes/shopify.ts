@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import fetch from 'node-fetch';
+import cookie from 'cookie';
 import { verifyHmac } from '../utils/verifyHmac';
 
 const router = Router();
@@ -10,6 +11,7 @@ const CALLBACK_ROUTE = '/callback';
 const shopifyApiKey = process.env.SHOPIFY_API_KEY;
 const shopifyApiSecretKey = process.env.SHOPIFY_API_SECRET_KEY;
 const shopifyAppUrl = process.env.SHOPIFY_APP_URL;
+const shopifyAppCallbackUrl = process.env.SHOPIFY_APP_CALLBACK_URL;
 const shopifyAppScope = process.env.SHOPIFY_APP_SCOPE;
 const shopifyAppInitialUrl = process.env.SHOPIFY_APP_INITIAL_URL;
 
@@ -37,11 +39,8 @@ router.get('/api/install', (req, res) => {
   const { shop } = req.query;
   if (typeof shop === 'string') {
     const state = uuid();
-    const redirectUri = `${shopifyAppUrl}${req.baseUrl}${CALLBACK_ROUTE}`;
-    // https://shopify.dev/tutorials/authenticate-with-oauth
-    const installUrl = `https://${shop}/admin/oauth/authorize?client_id=${shopifyApiKey}&scope=${shopifyAppScope}&state=${state}&redirect_uri=${redirectUri}`;
+    const installUrl = `https://${shop}/admin/oauth/authorize?client_id=${shopifyApiKey}&scope=${shopifyAppScope}&state=${state}&redirect_uri=${shopifyAppCallbackUrl}`;
 
-    // should be handled with cookie
     res.cookie('state', state);
     res.json({ installUrl });
     return;
@@ -52,6 +51,8 @@ router.get('/api/install', (req, res) => {
 
 router.get('/api/verify', (req, res) => {
   console.log(req.query, req.session.state, req.headers);
+  cookie.parse(req.headers.cookie);
+
   // just mocking for now
   res.status(200).json({ status: 'ok' });
 });
