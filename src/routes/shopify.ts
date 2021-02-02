@@ -3,7 +3,6 @@ import { v4 as uuid } from 'uuid';
 import fetch from 'node-fetch';
 import cookie from 'cookie';
 import { verifyHmac } from '../utils/verifyHmac';
-import { parse } from 'dotenv/types';
 
 const router = Router();
 
